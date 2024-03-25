@@ -16,7 +16,7 @@ def main():
                 print(parsed_data)
                 get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
                 path = get.split(' ')[1]
-                print(path)
+                #print(path)
                 if path == '/' or 'echo' in path or 'user-agent' in path:
                     if 'echo' in path:
                         path_parts = path.split('/')
