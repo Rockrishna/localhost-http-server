@@ -10,7 +10,7 @@ def main():
                     if data:
                         break
                 # Send HTTP response to the client
-                client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
+                #client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
             
             if client_socket:
                  break
