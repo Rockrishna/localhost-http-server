@@ -24,7 +24,9 @@ def main():
                         string = '/'.join(path_parts[index+1:])
                         client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n{string}'.encode())
                     else:
-                        client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
+                        client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
+                else:
+                    client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
                 client_socket.close()
                 break
 
