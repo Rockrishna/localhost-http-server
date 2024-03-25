@@ -13,14 +13,15 @@ def main():
                 # Send HTTP response to the client
                 parsed_data = data.decode()
                 #parse the data
-                print(parsed_data)
+                #print(parsed_data)
                 get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
                 path = get.split(' ')[1]
-                print(path)
+                #print(path)
                 if path == '/' or 'echo' in path:
                     if 'echo' in path:
                         path_parts = path.split('/')
-                        string = '/'.join(path_parts[1:])
+                        echo = path_parts.find('echo')
+                        string = '/'.join(path_parts[echo+1:])
                         client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n{string}'.encode())
                     else:
                         client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
