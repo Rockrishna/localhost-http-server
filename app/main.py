@@ -10,18 +10,15 @@ def main():
                     if data:
                         break
                 # Send HTTP response to the client
-                #client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
-            
-            if client_socket:
-                 break
-        parsed_data = data.decode()
-        #parse the data
-        get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
-        if get[4] == r'/':
-            client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
-        else:
-            client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
+                parsed_data = data.decode()
+                #parse the data
+                get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
+                if get[4] == r'/':
+                    client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
+                else:
+                    client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
+                client_socket.close()
+                break
 
-    client_socket.close()
 if __name__ == "__main__":
     main()
