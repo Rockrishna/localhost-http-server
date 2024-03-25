@@ -14,7 +14,7 @@ def main():
                 parsed_data = data.decode()
                 #parse the data
                 #uncomment for testing
-                #print(parsed_data)
+                print(parsed_data)
                 get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
                 path = get.split(' ')[1]
                 if r"/" in path:
