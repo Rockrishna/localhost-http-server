@@ -11,8 +11,8 @@ def main():
                         data = client_socket.recv(1024)
                         if data:
                             break
-            if data:
-                break
+                if data:
+                    break
                 # Send HTTP response to the client
                 #client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
         parsed_data = data.decode()
