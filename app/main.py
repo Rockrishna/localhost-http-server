@@ -18,10 +18,9 @@ def main():
                 path = get.split(' ')[1]
                 print(path)
                 if path == '/':
-                    path_parts = path.split('/')
-                    if 'echo' in path_parts:
-                        index = path_parts.index('echo')
-                        string = '/'.join(path_parts[index+1:])
+                    if 'echo' in path:
+                        path_parts = path.split('/')
+                        string = '/'.join(path_parts[1:])
                         client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n{string}'.encode())
                     else:
                         client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
