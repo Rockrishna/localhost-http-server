@@ -22,7 +22,7 @@ def main():
                         path_parts = path.split('/')
                         echo = path_parts.index('echo')
                         string = '/'.join(path_parts[echo+1:])
-                        client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n{string}'.encode())
+                        client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(string)}\r\n\r\n{string}'.encode())
                     else:
                         client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
                 else:
