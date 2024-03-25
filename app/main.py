@@ -17,16 +17,16 @@ def main():
                 print(parsed_data)
                 get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
                 path = get.split(' ')[1]
-                if r"/"  != path:
-                    client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
-                else:
+                if "echo" in path:
                     #get the data after echo
                     path_parts = path.split('/')
                     #index = path_parts.index('echo')
                     string = '/'.join(path_parts[1:])
                     #output
                     client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n{string}'.encode())
-                    
+                
+                else:
+                    client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
                 client_socket.close()
                 break
 
