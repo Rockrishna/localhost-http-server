@@ -20,8 +20,8 @@ def main():
                 if r"/" in path:
                     #get the data after echo
                     path_parts = path.split('/')
-                    index = path_parts.index('echo')
-                    string = '/'.join(path_parts[index+1:])
+                    #index = path_parts.index('echo')
+                    string = '/'.join(path_parts[1:])
                     #output
                     client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n{string}'.encode())
                 
