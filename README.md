@@ -15,7 +15,14 @@ The server uses Python's `socket`, `sys`, `threading`, `argparse`, `os`, and `mi
 
 ## Usage
 
-To start the server, run the provided Python script with the desired directory as an argument. The server will then listen for incoming HTTP requests and respond according to the logic defined in the `handle_client` function.
+1. Run the script using the command: `python server.py`.
+2. The server will handle incoming HTTP GET requests.
+3. It can respond to the following paths:
+   - `/echo/<text>`: Echoes the text sent in the request.
+   - `/user-agent`: Returns the user-agent header from the request.
+   - `/files/<filename>`: Serves the file specified if it exists in the server directory.
+
+Make sure to replace `<text>` and `<filename>` with your actual text and file name.
 
 ## Contributing
 
