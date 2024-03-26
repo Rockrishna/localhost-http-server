@@ -1,8 +1,11 @@
 import socket
 import sys
 import threading
+import argparse
+import os
+import mimetypes
 
-def handle_client(client_socket):
+def handle_client(client_socket, directory):
     with client_socket:
         while True:
             data = client_socket.recv(1024)
@@ -15,7 +18,15 @@ def handle_client(client_socket):
         get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
         path = get.split(' ')[1]
         #print(path)
-        if path == '/' or 'echo' in path or 'user-agent' in path:
+        if path.startswith('/files/'):
+            file_path = os.path.join(directory, path[7:])
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as f:
+                    file_contents = f.read()
+                client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_contents)}\r\n\r\n'.encode() + file_contents)
+            else:
+                client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
+        elif path == '/' or 'echo' in path or 'user-agent' in path:
             if 'echo' in path:
                 path_parts = path.split('/')
                 echo = path_parts.index('echo')
@@ -24,17 +35,29 @@ def handle_client(client_socket):
             elif 'user-agent' in path:
                 header = user_agent.split(' ')[1]
                 client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(header)}\r\n\r\n{header}'.encode())
+            elif 'files' in path:
+                filename = path.split('/')[-1]
+                file_path = os.path.join(directory, filename)
+                if os.path.exists(file_path):
+                    with open(file_path, 'rb') as f:
+                        file_contents = f.read()
+                    client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_contents)}\r\n\r\n'.encode() + file_contents)
+                else:
+                    client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
             else:
                 client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
         else:
             client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
 
-
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--directory', type=str, required=True)
+    args = parser.parse_args()
+
     with socket.create_server(("localhost", 4221), reuse_port=True) as server_socket:
         while True:
             client_socket, address = server_socket.accept() # Wait for a client
-            client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+            client_thread = threading.Thread(target=handle_client, args=(client_socket, args.directory))
             client_thread.start()
 
 if __name__ == "__main__":
