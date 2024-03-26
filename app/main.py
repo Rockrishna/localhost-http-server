@@ -19,7 +19,7 @@ def handle_client(client_socket, directory):
         path = get.split(' ')[1]
         #print(path)
         if get.split(' ')[0] == 'GET':
-            if path == '/' or 'echo' in path or 'user-agent' in path:
+            if path == '/' or 'echo' in path or 'user-agent' in path or path.startswith('/files/'):
                 if 'echo' in path:
                     path_parts = path.split('/')
                     echo = path_parts.index('echo')
@@ -28,9 +28,8 @@ def handle_client(client_socket, directory):
                 elif 'user-agent' in path:
                     header = user_agent.split(' ')[1]
                     client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(header)}\r\n\r\n{header}'.encode())
-                elif path[1:6] == 'files':
-                    filename = path.split('/')[-1]
-                    file_path = os.path.join(directory, filename)
+                elif path.startswith('/files/'):
+                    file_path = os.path.join(directory, path[7:])
                     if os.path.exists(file_path):
                         with open(file_path, 'rb') as f:
                             file_contents = f.read()
