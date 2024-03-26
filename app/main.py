@@ -51,7 +51,7 @@ def handle_client(client_socket, directory):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--directory', type=str, required=True)
+    parser.add_argument('--directory', type=str, default=os.getcwd())
     args = parser.parse_args()
 
     with socket.create_server(("localhost", 4221), reuse_port=True) as server_socket:
