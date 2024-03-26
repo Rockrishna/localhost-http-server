@@ -1,37 +1,41 @@
 import socket
 import sys
+import threading
+
+def handle_client(client_socket):
+    with client_socket:
+        while True:
+            data = client_socket.recv(1024)
+            if data:
+                break
+        # Send HTTP response to the client
+        parsed_data = data.decode()
+        #parse the data
+        print(parsed_data)
+        get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
+        path = get.split(' ')[1]
+        #print(path)
+        if path == '/' or 'echo' in path or 'user-agent' in path:
+            if 'echo' in path:
+                path_parts = path.split('/')
+                echo = path_parts.index('echo')
+                string = '/'.join(path_parts[echo+1:])
+                client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(string)}\r\n\r\n{string}'.encode())
+            elif 'user-agent' in path:
+                header = user_agent.split(' ')[1]
+                client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(header)}\r\n\r\n{header}'.encode())
+            else:
+                client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
+        else:
+            client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
+
 
 def main():
     with socket.create_server(("localhost", 4221), reuse_port=True) as server_socket:
         while True:
             client_socket, address = server_socket.accept() # Wait for a client
-            with client_socket:
-                while True:
-                    data = client_socket.recv(1024)
-                    if data:
-                        break
-                # Send HTTP response to the client
-                parsed_data = data.decode()
-                #parse the data
-                print(parsed_data)
-                get, host, user_agent = parsed_data.split('\r\n')[0], parsed_data.split('\r\n')[1], parsed_data.split('\r\n')[2]
-                path = get.split(' ')[1]
-                #print(path)
-                if path == '/' or 'echo' in path or 'user-agent' in path:
-                    if 'echo' in path:
-                        path_parts = path.split('/')
-                        echo = path_parts.index('echo')
-                        string = '/'.join(path_parts[echo+1:])
-                        client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(string)}\r\n\r\n{string}'.encode())
-                    elif 'user-agent' in path:
-                        header = user_agent.split(' ')[1]
-                        client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(header)}\r\n\r\n{header}'.encode())
-                    else:
-                        client_socket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
-                else:
-                    client_socket.send('HTTP/1.1 404 Not Found\r\n\r\n'.encode())
-                client_socket.close()
-                break
+            client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+            client_thread.start()
 
 if __name__ == "__main__":
     main()
