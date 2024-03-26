@@ -28,7 +28,7 @@ def handle_client(client_socket, directory):
                 elif 'user-agent' in path:
                     header = user_agent.split(' ')[1]
                     client_socket.send(f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(header)}\r\n\r\n{header}'.encode())
-                elif 'files' in path:
+                elif path[1:6] == 'files':
                     filename = path.split('/')[-1]
                     file_path = os.path.join(directory, filename)
                     if os.path.exists(file_path):
